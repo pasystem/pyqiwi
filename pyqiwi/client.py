@@ -16,7 +16,7 @@ class QiwiError(Exception):
 
 class Qiwi(object):
     REDIRECT_URL = 'https://bill.qiwi.com/order/external/main.action'
-    INVOICE_URL = 'https://api.qiwi.com/api/v2/prv/{prv_id}/bills/{bill_id}'
+    INVOICE_URL = 'https://qwproxy.qiwi.com/api/v2/prv/{prv_id}/bills/{bill_id}'
     REFUND_URL = INVOICE_URL + '/refund/{refund_id}'
 
     INVOICE_STATUS_WAITING = 'waiting'
@@ -89,12 +89,13 @@ class Qiwi(object):
         else:
             return response
 
-    def create_invoice(self, invoice_id, amount, currency, comment, user, lifetime, pay_source='', prv_name=''):
-        # type: (str, decimal.Decimal, str, str, str, datetime.datetime, str, str) -> dict
+    def create_invoice(self, invoice_id, amount, currency, comment, user, lifetime, account='', pay_source='', prv_name=''):
+        # type: (str, decimal.Decimal, str, str, str, datetime.datetime, str, str, str) -> dict
         """
         Create invoice
         :param invoice_id: Merchant invoice id
         :param amount: Invoice amount
+        :param account: The user's account from the Provider
         :param currency: Currency (Alpha-3 ISO 4217 code)
         :param comment: Invoice comment
         :param user: String of the form "tel:<phone_number>",
@@ -105,6 +106,7 @@ class Qiwi(object):
         """
         params = {
             'amount': amount,
+            'account': account,
             'ccy': currency,
             'comment': comment,
             'user': user,
